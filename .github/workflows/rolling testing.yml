@@ -50,5 +50,5 @@ jobs:
       uses: docker/scout-action@v1.26.0
       with:
         # Image to analyze
-        image: mateuszokroj1/ubuntu-latest-amd64-dev-base:latest
+        image: mateuszokroj1/ubuntu-amd64-dev-base:latest
         command: cves

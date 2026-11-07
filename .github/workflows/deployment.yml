@@ -1,4 +1,4 @@
-name: Docker Image CI - main
+name: Docker Image Deployment
 
 on:
   push:
@@ -42,4 +42,4 @@ jobs:
         file: Dockerfile
         pull: true
         push: true
-        tags: mateuszokroj1/ubuntu-latest-amd64-dev-base:latest
+        tags: mateuszokroj1/ubuntu-amd64-dev-base:latest
