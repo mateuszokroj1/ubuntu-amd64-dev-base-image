@@ -9,11 +9,12 @@ RUN git clone --depth 1 --branch v3.8.1 https://github.com/git-lfs/git-lfs.git /
 WORKDIR /src/git-lfs
 
 # Git LFS v3.8.1 bundles vulnerable versions of these modules.
-RUN go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.1-0.20261009181718-2f1f834330b2 \
+RUN go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.1-0.20261009181718-2f1f834330b2 github.com/klauspost/compress@v1.20.2 \
     && CGO_ENABLED=0 go build -trimpath -o /git-lfs . \
     && /git-lfs version \
     && test "$(go list -m -f '{{.Version}}' golang.org/x/net)" = v0.62.0 \
-    && test "$(go list -m -f '{{.Version}}' golang.org/x/crypto)" = v0.58.1-0.20261009181718-2f1f834330b2
+    && test "$(go list -m -f '{{.Version}}' golang.org/x/crypto)" = v0.58.1-0.20261009181718-2f1f834330b2 \
+    && test "$(go list -m -f '{{.Version}}' github.com/klauspost/compress)" = v1.20.2
 
 FROM ubuntu:latest
 
