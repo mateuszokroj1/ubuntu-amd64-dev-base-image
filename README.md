@@ -1,6 +1,6 @@
 # Ubuntu AMD64 Dev Base Image
 
-Development image with C/C++ tools, Git LFS, and vcpkg. Build instructions are
+Development image with C/C++ tools, Python, Git LFS, and vcpkg. Build instructions are
 available in the [Dockerfile](./Dockerfile).
 
 ## Operating system and architecture
