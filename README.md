@@ -1,6 +1,6 @@
 # Ubuntu AMD64 Dev Base Image
 
-Development image with C/C++ tools, Git LFS, and vcpkg. Build instructions are
+Development image with C/C++ tools, Python, Git LFS, and vcpkg. Build instructions are
 available in the [Dockerfile](./Dockerfile).
 
 ## Operating system and architecture
@@ -28,6 +28,7 @@ docker build --platform linux/amd64 -t ubuntu-amd64-dev-base-image .
 | Go (used only to build Git LFS) | `1.27.3` (`golang:1.27.3-bookworm`) |
 | `golang.org/x/net` (dependency used to build Git LFS) | `v0.62.0` |
 | `golang.org/x/crypto` (dependency used to build Git LFS) | `v0.58.1-0.20261009181718-2f1f834330b2` |
+| `github.com/klauspost/compress` (dependency used to build Git LFS) | `v1.20.2` |
 | vcpkg | Revision from the default branch of Microsoft's repository, fetched at build time; not pinned |
 | `build-essential`, `gcc` | APT versions available at build time |
 | `clang`, `clang-format`, `clang-tidy`, `clang-tools`, `clangd`, `python3-clang` | APT versions available at build time |
