@@ -34,7 +34,7 @@ jobs:
         # Password or personal access token used to log against the Docker registry
         password: ${{ secrets.DOCKER_PASS }}
 
-    - name: Pull and increment build
+    - name: Pull and increment build and push to Docker Hub
       # You may pin to the exact commit or the version.
       # uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc
       uses: docker/build-push-action@v7.4.0
