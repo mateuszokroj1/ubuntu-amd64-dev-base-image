@@ -1,10 +1,8 @@
-FROM golang:1.27.3-bookworm AS git-lfs-builder
+FROM golang:1.27.3-bookworm@sha256:025eefc1e8dbe63201734a72aaa0a55d7a077f2d8410432f8ae2f3e939f32871 AS git-lfs-builder
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN git clone --depth 1 --branch v3.8.1 https://github.com/git-lfs/git-lfs.git /src/git-lfs
+RUN git init /src/git-lfs \
+    && git -C /src/git-lfs fetch --depth 1 https://github.com/git-lfs/git-lfs.git 36e2915281bedab8aa4f0c8ef69fc183d7c4d0a5 \
+    && git -C /src/git-lfs checkout --detach FETCH_HEAD
 
 WORKDIR /src/git-lfs
 
@@ -16,32 +14,65 @@ RUN go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.1-0.20261009181718
     && test "$(go list -m -f '{{.Version}}' golang.org/x/crypto)" = v0.58.1-0.20261009181718-2f1f834330b2 \
     && test "$(go list -m -f '{{.Version}}' github.com/klauspost/compress)" = v1.20.2
 
-FROM ubuntu:latest
+FROM ubuntu:26.04@sha256:157dc3d6e4a3e4f2c68d12df9df9ed6e808b59af6d4c3757b432b4f519916725
 
 COPY --from=git-lfs-builder /git-lfs /usr/local/bin/git-lfs
+COPY --from=git-lfs-builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 
-# Start path is user dir
 WORKDIR /home
 
-# Install updates
-RUN apt update
-RUN apt full-upgrade -y
-
-# Install basic dev-libs
-RUN apt install build-essential gcc clang-format clang-tidy clang-tools clang clangd libc++-dev libc++abi-dev libclang-dev liblldb-dev lld lldb llvm-dev llvm-runtime llvm python3-clang -y
-
-# Install Git and configure the patched Git LFS build
-RUN apt install -y ca-certificates curl git \
+# Pin directly installed packages to Ubuntu 26.04-compatible versions.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential=12.12ubuntu2.26.04.2 \
+        gcc=4:15.2.0-5ubuntu1 \
+        gcc-15=15.2.0-16ubuntu1 \
+        g++=4:15.2.0-5ubuntu1 \
+        g++-15=15.2.0-16ubuntu1 \
+        clang=1:21.1.6-71 \
+        clang-21=1:21.1.8-6ubuntu1 \
+        clang-format=1:21.1.6-71 \
+        clang-format-21=1:21.1.8-6ubuntu1 \
+        clang-tidy=1:21.1.6-71 \
+        clang-tidy-21=1:21.1.8-6ubuntu1 \
+        clang-tools=1:21.1.6-71 \
+        clang-tools-21=1:21.1.8-6ubuntu1 \
+        clangd=1:21.1.6-71 \
+        clangd-21=1:21.1.8-6ubuntu1 \
+        libc++-dev=1:21.1.6-71 \
+        libc++-21-dev=1:21.1.8-6ubuntu1 \
+        libc++abi-dev=1:21.1.6-71 \
+        libc++abi-21-dev=1:21.1.8-6ubuntu1 \
+        libclang-dev=1:21.1.6-71 \
+        libclang-21-dev=1:21.1.8-6ubuntu1 \
+        liblldb-dev=1:21.1.6-71 \
+        liblldb-21-dev=1:21.1.8-6ubuntu1 \
+        lld=1:21.1.6-71 \
+        lld-21=1:21.1.8-6ubuntu1 \
+        lldb=1:21.1.6-71 \
+        lldb-21=1:21.1.8-6ubuntu1 \
+        llvm=1:21.1.6-71 \
+        llvm-21=1:21.1.8-6ubuntu1 \
+        llvm-dev=1:21.1.6-71 \
+        llvm-21-dev=1:21.1.8-6ubuntu1 \
+        llvm-runtime=1:21.1.6-71 \
+        llvm-21-runtime=1:21.1.8-6ubuntu1 \
+        python3-clang=1:21.1.6-71 \
+        python3-clang-21=1:21.1.8-6ubuntu1 \
+        ca-certificates=20260816ubuntu0.26.04.2 \
+        curl=8.18.0-1ubuntu2.8 \
+        git=1:2.53.0-1ubuntu1.1 \
+        tar=1.35+dfsg-4ubuntu0.4 \
+        zip=3.0-15ubuntu3 \
+        unzip=6.0-29ubuntu1 \
     && git lfs version \
-    && git lfs install --system
+    && git lfs install --system \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install vcpkg system dependencies
-RUN apt install -y curl tar zip unzip
-
-# Clone repo of vcpkg
-RUN git clone https://github.com/microsoft/vcpkg
-
-RUN ./vcpkg/bootstrap-vcpkg.sh 
+RUN git init /home/vcpkg \
+    && git -C /home/vcpkg fetch --depth 1 https://github.com/microsoft/vcpkg.git 9eec002df1cd109f8f104cd966a763daf9751489 \
+    && git -C /home/vcpkg checkout --detach FETCH_HEAD \
+    && ./vcpkg/bootstrap-vcpkg.sh
 
 ENV VCPKG_ROOT="/home/vcpkg"
 ENV PATH="${VCPKG_ROOT}:${PATH}"
