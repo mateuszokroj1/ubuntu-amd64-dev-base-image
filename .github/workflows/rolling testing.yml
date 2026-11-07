@@ -1,5 +1,8 @@
 name: Docker Image CI - main
 
+env:
+  tag: mateuszokroj1/ubuntu-amd64-dev-base:latest
+
 on:
   pull_request:
     branches: [ "main" ]
@@ -42,7 +45,7 @@ jobs:
         file: Dockerfile
         pull: true
         push: false
-        tags: mateuszokroj1/ubuntu-latest-amd64-dev-base:latest
+        tags: ${{ env.tag }}
 
     - name: Analyze CVEs
       # You may pin to the exact commit or the version.
@@ -50,5 +53,5 @@ jobs:
       uses: docker/scout-action@v1.26.0
       with:
         # Image to analyze
-        image: mateuszokroj1/ubuntu-latest-amd64-dev-base:latest
+        image: ${{ env.tag }}
         command: cves
