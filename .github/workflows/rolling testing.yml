@@ -55,7 +55,7 @@ jobs:
         file: Dockerfile
         pull: true
         push: false
-        platform: ${{ matrix.platform }}
+        platforms: ${{ matrix.platform }}
         tags: ${{ env.tag }}
 
     - name: Analyze CVEs
