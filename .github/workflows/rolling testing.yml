@@ -20,7 +20,17 @@ jobs:
 
     name: Docker Build for Linux x64
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: []
+        platform: []
+        include:
+          - os: ubuntu-latest
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            platform: linux/arm64
+
+    runs-on: ${{ matrix.os }}
 
     steps:
 
@@ -45,6 +55,7 @@ jobs:
         file: Dockerfile
         pull: true
         push: false
+        platform: ${{ matrix.platform }}
         tags: ${{ env.tag }}
 
     - name: Analyze CVEs
