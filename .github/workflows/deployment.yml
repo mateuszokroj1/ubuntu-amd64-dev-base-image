@@ -52,5 +52,5 @@ jobs:
         file: Dockerfile
         pull: true
         push: true
-        platform: ${{ matrix.platform }}
+        platforms: ${{ matrix.platform }}
         tags: mateuszokroj1/ubuntu-dev-base:latest
