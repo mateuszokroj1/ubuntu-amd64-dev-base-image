@@ -17,8 +17,6 @@ jobs:
 
     strategy:
       matrix:
-        os: []
-        platform: []
         include:
           - os: ubuntu-latest
             platform: linux/amd64
