@@ -15,9 +15,17 @@ jobs:
     environment:
       name: production
 
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            platform: linux/arm64
+
     name: Docker Build for Linux x64
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
 
@@ -42,4 +50,5 @@ jobs:
         file: Dockerfile
         pull: true
         push: true
-        tags: mateuszokroj1/ubuntu-amd64-dev-base:latest
+        platforms: ${{ matrix.platform }}
+        tags: mateuszokroj1/ubuntu-dev-base:latest

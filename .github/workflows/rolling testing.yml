@@ -1,7 +1,7 @@
 name: Docker Image CI - main
 
 env:
-  tag: mateuszokroj1/ubuntu-amd64-dev-base:latest
+  tag: mateuszokroj1/ubuntu-dev-base:latest
 
 on:
   pull_request:
@@ -20,7 +20,15 @@ jobs:
 
     name: Docker Build for Linux x64
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux/amd64
+          - os: ubuntu-24.04-arm
+            platform: linux/arm64
+
+    runs-on: ${{ matrix.os }}
 
     steps:
 
@@ -45,6 +53,7 @@ jobs:
         file: Dockerfile
         pull: true
         push: false
+        platforms: ${{ matrix.platform }}
         tags: ${{ env.tag }}
 
     - name: Analyze CVEs
