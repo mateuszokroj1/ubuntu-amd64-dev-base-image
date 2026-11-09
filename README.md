@@ -1,4 +1,4 @@
-# Ubuntu AMD64 Dev Base Image
+# Ubuntu Dev Base Image
 
 Development image with C/C++ tools, Python, Git LFS, and vcpkg. Build instructions are
 available in the [Dockerfile](./Dockerfile).
@@ -7,7 +7,7 @@ available in the [Dockerfile](./Dockerfile).
 
 - **Base image:** `ubuntu:latest`. This is a moving tag; the specific Ubuntu
   release depends on what the tag points to when the image is pulled.
-- **Architecture:** the image is intended for `linux/amd64` (x86-64), as
+- **Architecture:** the image is intended for `linux/amd64` (x86-64) and `linux/arm64` (ARM 64), as
   indicated by the directory name. The Dockerfile does not enforce a platform;
   without `--platform`, Docker selects the architecture appropriate for the
   build environment.
@@ -16,7 +16,7 @@ available in the [Dockerfile](./Dockerfile).
 To build the image for amd64:
 
 ```sh
-docker build --platform linux/amd64 -t ubuntu-amd64-dev-base-image .
+docker build --platform linux/amd64 -t mateuszokroj1/ubuntu-dev-base-image:latest .
 ```
 
 ## Technologies and versions
