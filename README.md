@@ -6,7 +6,8 @@ available in the [Dockerfile](./Dockerfile).
 ## Operating system and architecture
 
 - **Base image:** `ubuntu:26.04` (Ubuntu 26.04.1 LTS), pinned to digest
-  `sha256:157dc3d6e4a3e4f2c68d12df9df9ed6e808b59af6d4c3757b432b4f519916725`.
+  `sha256:6a06111c3b0a8600feadb270aec771dc239bf407b25625f93f44ab00e11f4d3c`
+  (multi-platform index for amd64 and arm64).
 - **APT packages:** directly installed packages are pinned to specific
   versions. Their transitive dependencies are resolved from the Ubuntu 26.04
   archive at build time.
@@ -27,7 +28,7 @@ docker build --platform linux/amd64 -t mateuszokroj1/ubuntu-dev-base-image:ubunt
 |---|---|
 | Ubuntu | `26.04.1 LTS` (`26.04`) |
 | Git LFS | `3.8.1`, commit `36e2915281bedab8aa4f0c8ef69fc183d7c4d0a5` |
-| Go (used only to build Git LFS) | `1.27.3` (`golang:1.27.3-bookworm`, amd64 digest `sha256:025eefc1e8dbe63201734a72aaa0a55d7a077f2d8410432f8ae2f3e939f32871`) |
+| Go (used only to build Git LFS) | `1.27.3` (`golang:1.27.3-bookworm`, multi-platform index digest `sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0`) |
 | `golang.org/x/net` (dependency used to build Git LFS) | `v0.62.0` |
 | `golang.org/x/crypto` (dependency used to build Git LFS) | `v0.58.1-0.20261009181718-2f1f834330b2` |
 | `github.com/klauspost/compress` (dependency used to build Git LFS) | `v1.20.2` |
