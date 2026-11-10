@@ -35,8 +35,32 @@ RUN apt install -y ca-certificates curl git \
     && git lfs version \
     && git lfs install --system
 
-# Install vcpkg system dependencies
-RUN apt install -y curl tar zip unzip
+# Install additional language SDKs and command-line tools
+RUN install -m 0755 -d /etc/apt/keyrings \
+    && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc \
+    && chmod a+r /etc/apt/keyrings/docker.asc \
+    && . /etc/os-release \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu ${UBUNTU_CODENAME:-$VERSION_CODENAME} stable" > /etc/apt/sources.list.d/docker.list \
+    && curl -fsSLo /tmp/packages-microsoft-prod.deb "https://packages.microsoft.com/config/ubuntu/${VERSION_ID}/packages-microsoft-prod.deb" \
+    && dpkg -i /tmp/packages-microsoft-prod.deb \
+    && rm /tmp/packages-microsoft-prod.deb \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        nodejs default-jdk python3-full python3-dev python3-pip python3-venv \
+        docker-ce-cli dotnet-sdk-10.0 tar zip unzip \
+    && case "$(dpkg --print-architecture)" in \
+        amd64) powershell_arch=x64 ;; \
+        arm64) powershell_arch=arm64 ;; \
+        *) echo "Unsupported architecture for PowerShell" >&2; exit 1 ;; \
+    esac \
+    && powershell_version="$(curl -fsSL https://api.github.com/repos/PowerShell/PowerShell/releases/latest | sed -nE 's/^[[:space:]]*"tag_name": "v([^"]+)".*/\1/p' | head -n 1)" \
+    && test -n "$powershell_version" \
+    && mkdir -p /opt/microsoft/powershell/7 \
+    && curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v${powershell_version}/powershell-${powershell_version}-linux-${powershell_arch}.tar.gz" \
+        | tar -xz -C /opt/microsoft/powershell/7 \
+    && chmod +x /opt/microsoft/powershell/7/pwsh \
+    && ln -s /opt/microsoft/powershell/7/pwsh /usr/local/bin/pwsh \
+    && rm -rf /var/lib/apt/lists/*
 
 # Clone repo of vcpkg
 RUN git clone https://github.com/microsoft/vcpkg

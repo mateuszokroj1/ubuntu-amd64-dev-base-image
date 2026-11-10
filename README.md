@@ -1,7 +1,8 @@
 # Ubuntu Dev Base Image
 
-Development image with C/C++ tools, Python, Git LFS, and vcpkg. Build instructions are
-available in the [Dockerfile](./Dockerfile).
+Development image with C/C++ tools, Node.js, Java, Python, .NET 10, Docker CLI,
+PowerShell, Git LFS, and vcpkg. Build instructions are available in the
+[Dockerfile](./Dockerfile).
 
 ## Operating system and architecture
 
@@ -35,11 +36,18 @@ docker build --platform linux/amd64 -t mateuszokroj1/ubuntu-dev-base-image:lates
 | `libc++-dev`, `libc++abi-dev`, `libclang-dev`, `liblldb-dev` | APT versions available at build time |
 | `lld`, `lldb`, `llvm`, `llvm-dev`, `llvm-runtime` | APT versions available at build time |
 | `ca-certificates`, `curl`, `git`, `tar`, `zip`, `unzip` | APT versions available at build time |
+| Node.js | `nodejs` from Ubuntu APT |
+| Java JDK | `default-jdk` from Ubuntu APT |
+| Python SDK | `python3-full`, `python3-dev`, `python3-pip`, `python3-venv` from Ubuntu APT |
+| .NET SDK | `10.0` (`dotnet-sdk-10.0`) from Microsoft's APT repository |
+| Docker CLI | `docker-ce-cli` from Docker's APT repository; the Docker daemon is not installed |
+| PowerShell | Latest stable official GitHub release, installed from its Linux archive |
 
-APT package versions are not pinned in the Dockerfile. They are fetched from
-the current Ubuntu repositories (`apt update` and `apt full-upgrade`) and may
-therefore change between builds. To check the operating system, architecture,
-and exact package versions in a specific image, run:
+APT package versions are not pinned in the Dockerfile. Ubuntu packages come
+from the Ubuntu repositories; Docker CLI and .NET 10 come from their vendor
+APT repositories; PowerShell is downloaded from the latest stable GitHub
+release. These versions may change between builds. To check the operating
+system, architecture, and exact package versions in a specific image, run:
 
 ```sh
 cat /etc/os-release
@@ -47,7 +55,15 @@ dpkg --print-architecture
 dpkg-query -W -f='${binary:Package}\t${Version}\n' \
   build-essential gcc clang clang-format clang-tidy clang-tools clangd \
   libc++-dev libc++abi-dev libclang-dev liblldb-dev lld lldb llvm llvm-dev \
-  llvm-runtime python3-clang ca-certificates curl git tar zip unzip
+  llvm-runtime python3-clang ca-certificates curl git tar zip unzip \
+  nodejs default-jdk python3-full python3-dev python3-pip python3-venv \
+  docker-ce-cli dotnet-sdk-10.0
+node --version
+java --version
+python3 --version
+dotnet --version
+docker --version
+pwsh --version
 git lfs version
 vcpkg version
 ```
