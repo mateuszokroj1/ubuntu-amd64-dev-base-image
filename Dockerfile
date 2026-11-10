@@ -47,7 +47,7 @@ RUN install -m 0755 -d /etc/apt/keyrings \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
         nodejs default-jdk python3-full python3-dev python3-pip python3-venv \
-        docker-ce-cli dotnet-sdk-10.0 tar zip unzip \
+        docker-ce-cli dotnet-sdk-10.0 tar zip unzip cargo \
     && case "$(dpkg --print-architecture)" in \
         amd64) powershell_arch=x64 ;; \
         arm64) powershell_arch=arm64 ;; \
