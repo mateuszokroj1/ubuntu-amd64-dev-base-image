@@ -27,7 +27,7 @@ docker build --platform linux/amd64 -t mateuszokroj1/ubuntu-dev-base-image:ubunt
 | Technology / packages | Version |
 |---|---|
 | Ubuntu | `26.04.1 LTS` (`26.04`) |
-| Git LFS | `3.8.1`, commit `36e2915281bedab8aa4f0c8ef69fc183d7c4d0a5` |
+| Git LFS | `3.8.1`, commit `a662a6dbfedf706cfa9fc7a5b7bcc7ba2e2c8a65` |
 | Go (used only to build Git LFS) | `1.27.3` (`golang:1.27.3-bookworm`, multi-platform index digest `sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0`) |
 | `golang.org/x/net` (dependency used to build Git LFS) | `v0.62.0` |
 | `golang.org/x/crypto` (dependency used to build Git LFS) | `v0.58.1-0.20261009181718-2f1f834330b2` |

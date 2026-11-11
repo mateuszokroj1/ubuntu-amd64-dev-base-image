@@ -1,8 +1,9 @@
 FROM golang:1.27.3-bookworm@sha256:dc0963f32053e4bc451d24d87e3892d42d01021b61f093e98eb95c0352bb84b0 AS git-lfs-builder
 
 RUN git init /src/git-lfs \
-    && git -C /src/git-lfs fetch --depth 1 https://github.com/git-lfs/git-lfs.git 36e2915281bedab8aa4f0c8ef69fc183d7c4d0a5 \
-    && git -C /src/git-lfs checkout --detach FETCH_HEAD
+    && git -C /src/git-lfs fetch --depth 1 https://github.com/git-lfs/git-lfs.git refs/tags/v3.8.1:refs/tags/v3.8.1 \
+    && test "$(git -C /src/git-lfs rev-parse 'v3.8.1^{tag}')" = 36e2915281bedab8aa4f0c8ef69fc183d7c4d0a5 \
+    && git -C /src/git-lfs checkout --detach v3.8.1
 
 WORKDIR /src/git-lfs
 
