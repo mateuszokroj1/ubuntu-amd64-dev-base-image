@@ -1,39 +1,14 @@
-FROM golang:1.27.3-bookworm AS git-lfs-builder
-
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN git clone --depth 1 --branch v3.8.1 https://github.com/git-lfs/git-lfs.git /src/git-lfs
-
-WORKDIR /src/git-lfs
-
-# Git LFS v3.8.1 bundles vulnerable versions of these modules.
-RUN go get golang.org/x/net@v0.62.0 golang.org/x/crypto@v0.58.1-0.20261009181718-2f1f834330b2 github.com/klauspost/compress@v1.20.2 \
-    && CGO_ENABLED=0 go build -trimpath -o /git-lfs . \
-    && /git-lfs version \
-    && test "$(go list -m -f '{{.Version}}' golang.org/x/net)" = v0.62.0 \
-    && test "$(go list -m -f '{{.Version}}' golang.org/x/crypto)" = v0.58.1-0.20261009181718-2f1f834330b2 \
-    && test "$(go list -m -f '{{.Version}}' github.com/klauspost/compress)" = v1.20.2
-
-FROM ubuntu:latest
-
-COPY --from=git-lfs-builder /git-lfs /usr/local/bin/git-lfs
+FROM mateuszokroj1/ubuntu-dev-base:latest@sha256:e3936219db09bb1e0dc37df9c633fd146ef1f80577f09afd7bba8a887e7f91f0
 
 # Start path is user dir
 WORKDIR /home
 
-# Install updates
-RUN apt update
-RUN apt full-upgrade -y
-
-# Install basic dev-libs
-RUN apt install build-essential gcc clang-format clang-tidy clang-tools clang clangd libc++-dev libc++abi-dev libclang-dev liblldb-dev lld lldb llvm-dev llvm-runtime llvm python3-clang -y
-
 # Install Git and configure the patched Git LFS build
-RUN apt install -y ca-certificates curl git \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates curl git \
     && git lfs version \
-    && git lfs install --system
+    && git lfs install --system \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install additional language SDKs and command-line tools
 RUN install -m 0755 -d /etc/apt/keyrings \
@@ -46,8 +21,20 @@ RUN install -m 0755 -d /etc/apt/keyrings \
     && rm /tmp/packages-microsoft-prod.deb \
     && apt-get update \
     && apt-get install -y --no-install-recommends \
-        nodejs default-jdk python3-full python3-dev python3-pip python3-venv \
+        default-jdk python3-full python3-dev python3-pip python3-venv \
         docker-ce-cli dotnet-sdk-10.0 tar zip unzip cargo \
+    && apt-get remove -y nodejs \
+    && apt-get autoremove -y \
+    && case "$(dpkg --print-architecture)" in \
+        amd64) node_arch=x64; node_sha256=9a6bc82f9b491279147219f6a18add1e18424dce90d41d2a5fcd69d4924ba3aa ;; \
+        arm64) node_arch=arm64; node_sha256=0f3550d58d45e5d3cf7103d9e3f69937f09fe82fb5dd474c66a5d816fa58c9ee ;; \
+        *) echo "Unsupported architecture for Node.js" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSLo /tmp/node.tar.xz "https://nodejs.org/dist/v22.22.1/node-v22.22.1-linux-${node_arch}.tar.xz" \
+    && echo "${node_sha256}  /tmp/node.tar.xz" | sha256sum -c - \
+    && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 --no-same-owner \
+    && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /tmp/node.tar.xz \
+    && node --version \
     && case "$(dpkg --print-architecture)" in \
         amd64) powershell_arch=x64 ;; \
         arm64) powershell_arch=arm64 ;; \
@@ -61,11 +48,3 @@ RUN install -m 0755 -d /etc/apt/keyrings \
     && chmod +x /opt/microsoft/powershell/7/pwsh \
     && ln -s /opt/microsoft/powershell/7/pwsh /usr/local/bin/pwsh \
     && rm -rf /var/lib/apt/lists/*
-
-# Clone repo of vcpkg
-RUN git clone https://github.com/microsoft/vcpkg
-
-RUN ./vcpkg/bootstrap-vcpkg.sh 
-
-ENV VCPKG_ROOT="/home/vcpkg"
-ENV PATH="${VCPKG_ROOT}:${PATH}"
