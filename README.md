@@ -43,12 +43,13 @@ docker build --platform linux/amd64 -t mateuszokroj1/ubuntu-dev-base-image:lates
 | Python SDK | `python3-full`, `python3-dev`, `python3-pip`, `python3-venv` from Ubuntu APT |
 | .NET SDK | `10.0` (`dotnet-sdk-10.0`) from Microsoft's APT repository |
 | Docker CLI | `docker-ce-cli` from Docker's APT repository; the Docker daemon is not installed |
-| PowerShell | Latest stable official GitHub release, installed from its Linux archive |
+| PowerShell | `7.7.0`, pinned to the official GitHub release; Linux archives are verified by architecture-specific SHA-256 |
 
 APT package versions are not pinned in the Dockerfile. Ubuntu packages come
 from the Ubuntu repositories; Docker CLI and .NET 10 come from their vendor
-APT repositories; PowerShell is downloaded from the latest stable GitHub
-release. These versions may change between builds. To check the operating
+APT repositories. PowerShell is pinned to `7.7.0` and its archive is verified
+using an architecture-specific SHA-256 digest. These versions may change
+between builds. To check the operating
 system, architecture, and exact package versions in a specific image, run:
 
 ```sh

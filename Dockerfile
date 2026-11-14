@@ -35,16 +35,17 @@ RUN install -m 0755 -d /etc/apt/keyrings \
     && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 --no-same-owner \
     && rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /tmp/node.tar.xz \
     && node --version \
+    && powershell_version=7.7.0 \
     && case "$(dpkg --print-architecture)" in \
-        amd64) powershell_arch=x64 ;; \
-        arm64) powershell_arch=arm64 ;; \
+        amd64) powershell_arch=x64; powershell_sha256=c89d9c682d2c403dfe726f3df948e359675235a5bd6fab535776de69729ca0cb ;; \
+        arm64) powershell_arch=arm64; powershell_sha256=e59c89776eaa59790d44b3edd14277435225ab08b6e7603763101b89de83d935 ;; \
         *) echo "Unsupported architecture for PowerShell" >&2; exit 1 ;; \
     esac \
-    && powershell_version="$(curl -fsSL https://api.github.com/repos/PowerShell/PowerShell/releases/latest | sed -nE 's/^[[:space:]]*"tag_name": "v([^"]+)".*/\1/p' | head -n 1)" \
-    && test -n "$powershell_version" \
     && mkdir -p /opt/microsoft/powershell/7 \
-    && curl -fsSL "https://github.com/PowerShell/PowerShell/releases/download/v${powershell_version}/powershell-${powershell_version}-linux-${powershell_arch}.tar.gz" \
-        | tar -xz -C /opt/microsoft/powershell/7 \
+    && curl -fsSLo /tmp/powershell.tar.gz "https://github.com/PowerShell/PowerShell/releases/download/v${powershell_version}/powershell-${powershell_version}-linux-${powershell_arch}.tar.gz" \
+    && echo "${powershell_sha256}  /tmp/powershell.tar.gz" | sha256sum -c - \
+    && tar -xzf /tmp/powershell.tar.gz -C /opt/microsoft/powershell/7 \
+    && rm /tmp/powershell.tar.gz \
     && chmod +x /opt/microsoft/powershell/7/pwsh \
     && ln -s /opt/microsoft/powershell/7/pwsh /usr/local/bin/pwsh \
     && rm -rf /var/lib/apt/lists/*
