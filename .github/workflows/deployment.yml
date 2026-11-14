@@ -51,4 +51,4 @@ jobs:
         pull: true
         push: true
         platforms: ${{ matrix.platform }}
-        tags: mateuszokroj1/ubuntu-dev-base:extended-latest
+        tags: mateuszokroj1/ubuntu-dev-base:extended-ubuntu-26.04

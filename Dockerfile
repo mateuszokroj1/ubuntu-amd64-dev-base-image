@@ -1,4 +1,4 @@
-FROM mateuszokroj1/ubuntu-dev-base:latest
+FROM mateuszokroj1/ubuntu-dev-base:ubuntu-26.04
 
 # Start path is user dir
 WORKDIR /home
