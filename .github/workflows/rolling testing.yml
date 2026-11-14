@@ -1,7 +1,7 @@
 name: Docker Image CI - main
 
 env:
-  tag: mateuszokroj1/ubuntu-dev-base:latest
+  tag: mateuszokroj1/ubuntu-dev-base:extended-latest
 
 on:
   pull_request:
