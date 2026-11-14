@@ -1,4 +1,4 @@
-FROM mateuszokroj1/ubuntu-dev-base:latest@sha256:e3936219db09bb1e0dc37df9c633fd146ef1f80577f09afd7bba8a887e7f91f0
+FROM mateuszokroj1/ubuntu-dev-base:latest
 
 # Start path is user dir
 WORKDIR /home
